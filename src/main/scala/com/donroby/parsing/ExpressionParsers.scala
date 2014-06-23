@@ -23,7 +23,7 @@ trait ExpressionParsers extends RegexParsers with ExpressionSyntax {
 
   def operand = (integer | parenthesizedExpression)
 
-  def expression:Parser[Expression] = ( product | integer | parenthesizedExpression )
+  def expression:Parser[Expression] = ( sum | product | integer | parenthesizedExpression )
 
 }
 
@@ -34,7 +34,7 @@ object ExpressionParsers extends ExpressionParsers {
   }
 
   def parseExpression(input: CharSequenceReader): ExpressionParsers.Expression = {
-    expression(input) match {
+    parsePhrase(input) match {
       case Success(t, _) => t
       case NoSuccess(msg, next) => throw new IllegalArgumentException(
         "Could not parse '" + input + "' near '" + next.pos.longString + ": " + msg)
