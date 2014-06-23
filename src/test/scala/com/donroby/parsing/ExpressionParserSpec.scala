@@ -65,8 +65,7 @@ class ExpressionParserSpec extends FlatSpec  {
 
   it should "throw exception given incomplete input" in  {
     intercept[IllegalArgumentException] {
-      val expression: Expression = parseExpression("2 +")
-      System.out.println(expression);
+      parseExpression("2 +")
     }
   }
 

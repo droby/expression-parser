@@ -5,8 +5,11 @@ import scala.util.parsing.input.CharSequenceReader
 
 trait ExpressionParsers extends RegexParsers with ExpressionSyntax {
 
-  def integer:Parser[IntegerLiteral] = """-?\d+""".r ^^ {
-    s => new IntegerLiteral(s.toInt)}
+  def integer:Parser[IntegerLiteral] = {
+    """-?\d+""".r ^^ {
+      s => new IntegerLiteral(s.toInt)
+    }
+  }
 
   def sum:Parser[Sum] = operand ~ "+" ~ operand ^^ {
     case (x ~ "+" ~ y) => Sum(x, y)
@@ -16,13 +19,12 @@ trait ExpressionParsers extends RegexParsers with ExpressionSyntax {
     case (x ~ "*" ~ y) => Product(x, y)
   }
 
-  def parenthesizedExpression = "(" ~ expression ~ ")" ^^ {
-    case ("(" ~ e ~ ")") => e
-  }
+  def parenthesizedExpression = "(" ~> expression <~ ")"
 
   def operand = (integer | parenthesizedExpression)
 
-  def expression:Parser[Expression] = ( sum | product | integer | parenthesizedExpression )
+  def expression:Parser[Expression] = ( product | integer | parenthesizedExpression )
+
 }
 
 object ExpressionParsers extends ExpressionParsers {
@@ -32,7 +34,7 @@ object ExpressionParsers extends ExpressionParsers {
   }
 
   def parseExpression(input: CharSequenceReader): ExpressionParsers.Expression = {
-    parsePhrase(input) match {
+    expression(input) match {
       case Success(t, _) => t
       case NoSuccess(msg, next) => throw new IllegalArgumentException(
         "Could not parse '" + input + "' near '" + next.pos.longString + ": " + msg)
