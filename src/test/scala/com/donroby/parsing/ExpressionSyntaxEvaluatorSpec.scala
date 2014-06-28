@@ -27,8 +27,4 @@ class ExpressionSyntaxEvaluatorSpec  extends FlatSpec {
       ) == 8)
   }
 
-  it should "evaluate a product of two literals" in {
-    assert(evaluate(Product(IntegerLiteral(2), IntegerLiteral(3))) == 6)
-  }
-
 }
